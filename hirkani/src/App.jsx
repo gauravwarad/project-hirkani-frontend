@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Signup from './components/Signup/Signup';
 import { Container, Row, Col } from 'react-bootstrap';
+import ProtectedLayout from './components/Auxiliary/ProtectedLayout';
+import ProfilePage from './components/ProfilePage/ProfilePage';
 
 function App() {
   
@@ -17,8 +19,14 @@ function App() {
         <Row className="flex-grow-1">
           <Col>
             <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+                {/* Public Routes */}
+                <Route path="/" element={<Login />} /> 
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+
+                <Route element={<ProtectedLayout />}>
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Route>
             </Routes>
           </Col>
         </Row>
