@@ -20,9 +20,6 @@ const Login = () => {
       setError("");
 
       try{
-          console.log("here")
-          console.log(email)
-          console.log(password)
           const formData = new FormData();
           formData.append("username", email);
           formData.append("password", password);
@@ -32,21 +29,33 @@ const Login = () => {
                 headers: { "Content-Type": "multipart/form-data" },
             }
           );
-          // const response = await axios.get
-          console.log(response.data)
+          // console.log(response.data);
           const token = response.data.access_token;
           localStorage.setItem('access_token', token);
           navigate("/profile") // change this to home..
       }
       catch (err) {
-          setError("something went wrong, sorry!")
+          // setError(err.message);
+          if (err.response) {
+            console.error("Error Response:", err.response.data); // Log full error details
+            setError(err.response.data.detail || JSON.stringify(err.response.data)); // Display error details
+        } else if (err.request) {
+            console.error("No response received:", err.request);
+            setError("No response from server");
+        } else {
+            console.error("Error setting up request:", err.message);
+            setError(err.message);
+        }
       }
       
   }
     return (
-        <Container className="d-flex justify-content-center">
-          <Row className="w-100">
+        <Container className="d-flex justify-content-md-center">
+          <Row className="w-100 justify-content-md-center">
             <Col xs={12} sm={8} md={6} lg={4}> {/* Adjust width on different screens */}
+              <br/>
+              <p>Welcome back! Login to you account :)</p>
+              <br/>
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>
