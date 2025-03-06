@@ -8,7 +8,8 @@ import React from 'react';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
-// import "./Login.css"
+import api from '../Auxiliary/ApiAxios';
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +24,7 @@ const Login = () => {
           const formData = new FormData();
           formData.append("username", email);
           formData.append("password", password);
-          const response = await axios.post('http://127.0.0.1:8000/auth/jwt/login',
+          const response = await api.post('http://127.0.0.1:8000/auth/jwt/login',
             formData, 
             {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -32,7 +33,7 @@ const Login = () => {
           // console.log(response.data);
           const token = response.data.access_token;
           localStorage.setItem('access_token', token);
-          navigate("/profile") // change this to home..
+          navigate("/home") // change this to home..
       }
       catch (err) {
           // setError(err.message);

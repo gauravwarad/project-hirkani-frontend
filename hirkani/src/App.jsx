@@ -9,6 +9,8 @@ import Signup from './components/Signup/Signup';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProtectedLayout from './components/Auxiliary/ProtectedLayout';
 import ProfilePage from './components/ProfilePage/ProfilePage';
+import HomePage from './components/HomePage/HomePage';
+import SearchPage from './components/Search/Search';
 
 function App() {
   
@@ -26,6 +28,8 @@ function App() {
 
                 <Route element={<ProtectedLayout />}>
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/search" element={<SearchPage />} />
                 </Route>
             </Routes>
           </Col>

@@ -8,6 +8,7 @@ import React from 'react';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
+import api from '../Auxiliary/ApiAxios';
 // import "./Login.css"
 
 const Signup = () => {
@@ -22,14 +23,14 @@ const Signup = () => {
       setError("");
 
       try{
-        console.log({ email, password, username });
-          const response = await axios.post('http://127.0.0.1:8000/auth/register',
+        // console.log({ email, password, username });
+          const response = await api.post('http://127.0.0.1:8000/auth/register',
             {email, password, username},
             {
                 headers: { "Content-Type": "application/json" },
             }
           );
-          console.log(response.data)
+          // console.log(response.data)
           navigate("/login")
       }
       
