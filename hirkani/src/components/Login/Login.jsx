@@ -14,7 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("")
   const navigate = useNavigate();
-  // const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async(e) =>    {
       e.preventDefault();
@@ -33,8 +33,8 @@ const Login = () => {
           );
           // console.log(response.data);
           const token = response.data.access_token;
-          // login(token);
-          localStorage.setItem('access_token', token);
+          login(token);
+          // localStorage.setItem('access_token', token);
           navigate("/home")
       }
       catch (err) {

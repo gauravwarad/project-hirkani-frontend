@@ -2,12 +2,13 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Logout from '../Login/Logout';
-// import { useContext } from "react";
-// import { AuthContext } from '../Auxiliary/AuthContext';
+import { useContext } from "react";
+import { AuthContext } from '../Auxiliary/AuthContext';
 
 function MyNavbar() {
   // const { token } = useContext(AuthContext); 
-  const token = localStorage.getItem("access_token"); // to check if the user is logged in.
+  const { isLoggedIn } = useContext(AuthContext);
+  // const token = localStorage.getItem("access_token"); // to check if the user is logged in.
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -17,7 +18,7 @@ function MyNavbar() {
           <Nav className="me-auto">
             <Nav.Link href="/home">Home</Nav.Link>
             {/* Show Profile, Search, and Logout if the user is logged in */}
-            {token && (
+            {isLoggedIn && (
               <>
                 <Nav.Link href="/profile">Profile</Nav.Link>
                 <Nav.Link href="/search">Search</Nav.Link>
@@ -26,7 +27,7 @@ function MyNavbar() {
             )}
 
             {/* Show About only if the user is logged out */}
-            {!token && (
+            {!isLoggedIn && (
               <>
               <Nav.Link href="/login">Login</Nav.Link>
               <Nav.Link href="/signup">signup</Nav.Link>

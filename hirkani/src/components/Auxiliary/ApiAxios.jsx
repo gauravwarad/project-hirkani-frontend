@@ -38,6 +38,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       alert("Your session has expired. Please log in again.");
       localStorage.removeItem("access_token");
+
+      // Dispatch a logout event
+      window.dispatchEvent(logoutEvent);
+      
       window.location.href = "/login";
     }
     return Promise.reject(error);

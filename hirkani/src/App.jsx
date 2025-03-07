@@ -11,12 +11,12 @@ import ProtectedLayout from './components/Auxiliary/ProtectedLayout';
 import ProfilePage from './components/ProfilePage/ProfilePage';
 import HomePage from './components/HomePage/HomePage';
 import SearchPage from './components/Search/Search';
-// import { AuthProvider } from './components/Auxiliary/AuthContext';
+import { AuthProvider } from './components/Auxiliary/AuthContext';
 
 function App() {
   
   return (
-    // <AuthProvider>
+    <AuthProvider>
       <Router>
         <Container fluid className="d-flex flex-column min-vh-100">
           <Header />
@@ -39,7 +39,7 @@ function App() {
           <Footer />
         </Container>
       </Router>
-    // </AuthProvider>
+    </AuthProvider>
   );
 }
 
