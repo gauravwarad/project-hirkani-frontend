@@ -1,24 +1,25 @@
+import React, { useState, useContext } from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom"; 
-import React from 'react';
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'
 import api from '../Auxiliary/ApiAxios';
+import { AuthContext } from '../Auxiliary/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("")
   const navigate = useNavigate();
+  // const { login } = useContext(AuthContext);
 
   const handleSubmit = async(e) =>    {
       e.preventDefault();
       setError("");
+      // console.log("inside handlesumbit in login")
 
       try{
           const formData = new FormData();
@@ -32,8 +33,9 @@ const Login = () => {
           );
           // console.log(response.data);
           const token = response.data.access_token;
+          // login(token);
           localStorage.setItem('access_token', token);
-          navigate("/home") // change this to home..
+          navigate("/home")
       }
       catch (err) {
           // setError(err.message);

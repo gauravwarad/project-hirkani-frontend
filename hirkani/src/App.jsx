@@ -11,32 +11,35 @@ import ProtectedLayout from './components/Auxiliary/ProtectedLayout';
 import ProfilePage from './components/ProfilePage/ProfilePage';
 import HomePage from './components/HomePage/HomePage';
 import SearchPage from './components/Search/Search';
+// import { AuthProvider } from './components/Auxiliary/AuthContext';
 
 function App() {
   
   return (
-    <Router>
-      <Container fluid className="d-flex flex-column min-vh-100">
-        <Header />
-        <Row className="flex-grow-1">
-          <Col>
-            <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Login />} /> 
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+    // <AuthProvider>
+      <Router>
+        <Container fluid className="d-flex flex-column min-vh-100">
+          <Header />
+          <Row className="flex-grow-1">
+            <Col>
+              <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<Login />} /> 
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
 
-                <Route element={<ProtectedLayout />}>
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/home" element={<HomePage />} />
-                    <Route path="/search" element={<SearchPage />} />
-                </Route>
-            </Routes>
-          </Col>
-        </Row>
-        <Footer />
-      </Container>
-    </Router>
+                  <Route element={<ProtectedLayout />}>
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/home" element={<HomePage />} />
+                      <Route path="/search" element={<SearchPage />} />
+                  </Route>
+              </Routes>
+            </Col>
+          </Row>
+          <Footer />
+        </Container>
+      </Router>
+    // </AuthProvider>
   );
 }
 

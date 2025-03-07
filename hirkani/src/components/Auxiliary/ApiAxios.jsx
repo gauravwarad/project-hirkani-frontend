@@ -1,12 +1,20 @@
 import axios from "axios";
+// import { AuthContext } from "./AuthContext";
+// import { useContext } from "react";
 
 const api = axios.create({
   baseURL: "http://localhost:8000",
 });
 
+// const getAuthToken = () => {
+//     const { token } = useContext(AuthContext);
+//     return token;
+// };
+
 // ✅ Request Interceptor: Attach Token Dynamically
 api.interceptors.request.use(
   (config) => {
+    // const token = getAuthToken();
     const token = localStorage.getItem("access_token");
     
     if (token) {
