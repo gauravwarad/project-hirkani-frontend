@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Container, Tabs, Tab, Card, Spinner } from "react-bootstrap";
+import { Container, Tabs, Tab, Card, Spinner, ListGroup } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import api from "../Auxiliary/ApiAxios";
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -77,12 +78,37 @@ const ProfilePage = () => {
           </div>
         </Tab>
 
-        <Tab eventKey="following" title={`Following [10]`}>
-          <div className="p-3 text-center">Following list coming soon...</div>
+        <Tab eventKey="following" title={`Following [${profile.following.length}] `} >
+        <ListGroup className="mt-3">
+        {profile.following.length > 0 ? (
+          profile.following.map((user) => (
+            <ListGroup.Item key={user}>
+              <Link to={`/get-profile?who=${user}`} className="text-decoration-none">
+                {user}
+              </Link>
+            </ListGroup.Item>
+          ))
+        ) : (
+          profile.following.length == 0 && <p className="mt-3 text-muted">People you follow will appear here.</p>
+        )}
+      </ListGroup>
+          
         </Tab>
 
-        <Tab eventKey="followers" title={`Followers [15]`}>
-          <div className="p-3 text-center">Followers list coming soon...</div>
+        <Tab eventKey="followers" title={`Followers [${profile.followers.length}]`}>
+        <ListGroup className="mt-3">
+        {profile.followers.length > 0 ? (
+          profile.followers.map((user) => (
+            <ListGroup.Item key={user}>
+              <Link to={`/get-profile?who=${user}`} className="text-decoration-none">
+                {user}
+              </Link>
+            </ListGroup.Item>
+          ))
+        ) : (
+          profile.followers.length == 0 && <p className="mt-3 text-muted">People following you will appear here.</p>
+        )}
+      </ListGroup>
         </Tab>
       </Tabs>
     </Container>

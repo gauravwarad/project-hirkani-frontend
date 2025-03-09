@@ -12,6 +12,7 @@ import ProfilePage from './components/ProfilePage/ProfilePage';
 import HomePage from './components/HomePage/HomePage';
 import SearchPage from './components/Search/Search';
 import { AuthProvider } from './components/Auxiliary/AuthContext';
+import ViewProfile from './components/ProfilePage/ViewProfile';
 
 function App() {
   
@@ -30,6 +31,7 @@ function App() {
 
                   <Route element={<ProtectedLayout />}>
                       <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/get-profile" element={<ViewProfile />} />
                       <Route path="/home" element={<HomePage />} />
                       <Route path="/search" element={<SearchPage />} />
                   </Route>

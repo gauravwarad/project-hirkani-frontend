@@ -59,7 +59,7 @@ const SearchPage = () => {
         {users.length > 0 ? (
           users.map((user) => (
             <ListGroup.Item key={user.username}>
-              <Link to={`/profile/${user.username}`} className="text-decoration-none">
+              <Link to={`/get-profile?who=${user.username}`} className="text-decoration-none">
                 {user.username}
               </Link>
               {/* <small className="text-muted d-block">{user.email}</small> */}
