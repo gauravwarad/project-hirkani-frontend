@@ -22,6 +22,7 @@ function MyNavbar() {
               <>
                 <Nav.Link href="/profile">Profile</Nav.Link>
                 <Nav.Link href="/search">Search</Nav.Link>
+                <Nav.Link href='/addpost'>Add a Post</Nav.Link>
                 <Logout />
               </>
             )}

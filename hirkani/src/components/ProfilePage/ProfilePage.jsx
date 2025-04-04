@@ -67,6 +67,7 @@ const ProfilePage = () => {
                 <Card key={post.id} className="mb-3 shadow-sm">
                   <Card.Body>
                     <Card.Title>{post.title}</Card.Title>
+                    <Card.Subtitle>{post.rating}/5</Card.Subtitle>
                     <Card.Text>{post.content}</Card.Text>
                     <small className="text-muted">Posted on {new Date(post.created_at).toLocaleDateString()}</small>
                   </Card.Body>
