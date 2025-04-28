@@ -8,7 +8,9 @@ const HomePage = () => {
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef(null);
-  const limit = 1; // Number of posts per page
+  const [hoveredPostId, setHoveredPostId] = useState(null);
+
+  const limit = 10; // Number of posts per page
 
   const fetchPosts = async () => {
     if (!hasMore || loading) return;
@@ -51,13 +53,38 @@ const HomePage = () => {
       observer.current.observe(lastPostRef.current);
     }
   }, [loading, hasMore]);
-
+  
+  const handleLikeToggle = async (postId, isLiked) => {
+    try {
+      if (isLiked) {
+        await api.post(`/unlike/${postId}`);
+      } else {
+        await api.post(`/like/${postId}`);
+      }
+  
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                is_liked: !post.is_liked,
+                likes: post.likes + (post.is_liked ? -1 : 1),
+              }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+  
   return (
     <Container className="py-4" style={{ maxWidth: "800px" }}>
       {posts.length > 0 ? (
         posts.map((post, index) => (
           <Card key={post.id} className="mb-3 shadow-sm">
-            <Card.Body>
+            {/* <Card.Body>
+              <Card.Subtitle>{post.username} posted - </Card.Subtitle>
               <Card.Title>{post.title}</Card.Title>
               <Card.Subtitle>{post.rating}/5</Card.Subtitle>
               <Card.Text>{post.content}</Card.Text>
@@ -65,7 +92,37 @@ const HomePage = () => {
                 Posted on {new Date(post.created_at).toLocaleDateString()}
               </small>
               {index === posts.length - 1 && <div ref={lastPostRef}></div>}
-            </Card.Body>
+            </Card.Body> */}
+            <Card.Body>
+            <Card.Subtitle>{post.username} posted - </Card.Subtitle>
+            <Card.Title>{post.title}</Card.Title>
+            <Card.Subtitle>{post.rating}/5</Card.Subtitle>
+            <Card.Text>{post.content}</Card.Text>
+            
+            <div className="d-flex align-items-center gap-2 mt-2">
+              <Button
+                variant={post.is_liked ? "danger" : "outline-primary"}
+                size="sm"
+                onClick={() => handleLikeToggle(post.id, post.is_liked)}
+                onMouseEnter={() => setHoveredPostId(post.id)}
+                onMouseLeave={() => setHoveredPostId(null)}
+              >
+                {post.is_liked && hoveredPostId === post.id
+                  ? "Unlike"
+                  : post.is_liked
+                  ? "Liked"
+                  : "Like"}
+              </Button>
+              <small className="text-muted">{post.likes} likes</small>
+            </div>
+
+            <small className="text-muted">
+              Posted on {new Date(post.created_at).toLocaleDateString()}
+            </small>
+
+            {index === posts.length - 1 && <div ref={lastPostRef}></div>}
+          </Card.Body>
+
           </Card>
         ))
       ) : (

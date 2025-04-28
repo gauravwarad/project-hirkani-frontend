@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Container, Tabs, Tab, Card, Spinner, ListGroup } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Tabs, Tab, Card, Spinner, ListGroup, Button, Dropdown } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../Auxiliary/ApiAxios";
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [activeTab, setActiveTab] = useState("posts");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProfile = async () => {
       // commenting below because axios instance is handling it now.
@@ -49,6 +49,81 @@ const ProfilePage = () => {
       </Container>
     );
   }
+  const handleAccept = async (user) => {
+    try{
+      await api.post(`/accept-follow-request/${user}`);
+      // Update profile state to reflect the accepted request
+      setProfile((prevProfile) => ({...prevProfile,
+        followers: {...prevProfile.followers,
+          followers_requested: prevProfile.followers.followers_requested.filter((u) => u !== user),
+          followers: [...prevProfile.followers.followers, user],
+        },
+      }));
+    }
+    catch (error) {
+      console.error("Error following/unfollowing:", error);
+      setError({ message: error.message, status: error.response ? error.response.status : "Unknown" });
+    }
+  };
+  const handleReject = async (user) => {
+    try{
+      await api.delete(`/reject-follow-request/${user}`);
+      setProfile((prevProfile) => ({...prevProfile,
+        followers: {...prevProfile.followers,
+          followers_requested: prevProfile.followers.followers_requested.filter((u) => u !== user),
+        },
+      }));
+    }
+    catch (error) {
+      console.error("Error while rejecting:", error);
+      setError({ message: error.message, status: error.response ? error.response.status : "Unknown" });
+    }
+  };
+
+  const handleCancel = async (user) => {
+    try{
+      await api.delete(`/cancel-follow-request/${user}`);
+      // Update profile state to reflect the canceled request
+      setProfile((prevProfile) => ({...prevProfile,
+        following: {...prevProfile.following,
+          following_requested: prevProfile.following.following_requested.filter((u) => u !== user),
+        },
+      }));
+    }
+    catch (error) {
+      console.error("Error while canceling:", error);
+      setError({ message: error.message, status: error.response ? error.response.status : "Unknown" });
+    }
+  };
+
+  const deletePost = async (postId) => {
+    try{
+      await api.delete(`/delete-post/${postId}`);
+      setProfile((prevProfile) => ({...prevProfile,
+        posts: prevProfile.posts.filter((post) => post.id !== postId),
+      }));
+    }
+    catch (error) {
+      console.error("Failed to delete post", error);
+      setError({ message: error.message, status: error.response ? error.response.status : "Unknown" });
+    }
+    
+  };
+
+  const handleManageBusiness = async () => {
+    try {
+      const response = await api.get('/is_business_handler');
+      const { business_id, answer } = response.data;
+      console.log("answer", answer);
+      if (answer) {
+        navigate(`/business-profile?business_id=${business_id}`);
+      } else {
+        navigate('/claim-business');
+      }
+    } catch (error) {
+      console.error("Error verifying business ownership:", error);
+    }
+  };
 
   return (
     <Container className="d-flex flex-column align-items-center mt-4">
@@ -56,6 +131,11 @@ const ProfilePage = () => {
       <Card className="p-4 text-center shadow-sm" style={{ maxWidth: "500px", width: "100%" }}>
         <h2>Welcome, {profile.username}!</h2>
         <p className="text-muted">{profile.email}</p>
+        {/* a button to manage my business here */}
+        <Button variant="primary" className="mt-3" onClick={handleManageBusiness}>
+        Manage My Business
+        </Button>
+        
       </Card>
 
       {/* Tabs for Posts, Following, and Followers */}
@@ -66,6 +146,17 @@ const ProfilePage = () => {
               profile.posts.map((post) => (
                 <Card key={post.id} className="mb-3 shadow-sm">
                   <Card.Body>
+                    {/* Dropdown for Post Actions */}
+                    <Dropdown className="position-absolute top-0 end-0 m-2">
+                      <Dropdown.Toggle variant="light" size="sm" id={`dropdown-post-${post.id}`}>
+                        &#x22EE; {/* Unicode for three vertical dots */}
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => deletePost(post.id)}>Delete Post</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+
                     <Card.Title>{post.title}</Card.Title>
                     <Card.Subtitle>{post.rating}/5</Card.Subtitle>
                     <Card.Text>{post.content}</Card.Text>
@@ -79,38 +170,98 @@ const ProfilePage = () => {
           </div>
         </Tab>
 
-        <Tab eventKey="following" title={`Following [${profile.following.length}] `} >
+        <Tab eventKey="following" title={`Following [${profile.following.following.length}]`}>
         <ListGroup className="mt-3">
-        {profile.following.length > 0 ? (
-          profile.following.map((user) => (
-            <ListGroup.Item key={user}>
-              <Link to={`/get-profile?who=${user}`} className="text-decoration-none">
-                {user}
-              </Link>
-            </ListGroup.Item>
-          ))
-        ) : (
-          profile.following.length == 0 && <p className="mt-3 text-muted">People you follow will appear here.</p>
-        )}
-      </ListGroup>
-          
-        </Tab>
 
-        <Tab eventKey="followers" title={`Followers [${profile.followers.length}]`}>
+          {/* Approved Following */}
+          {profile.following.following.length > 0 ? (
+            profile.following.following.map((user) => (
+              <ListGroup.Item key={user}>
+                <Link to={`/get-profile?who=${user}`} className="text-decoration-none">
+                  {user}
+                </Link>
+              </ListGroup.Item>
+            ))
+          ) : (
+            <p className="mt-3 text-muted">People you follow will appear here.</p>
+          )}
+
+          {/* Pending Following Requests */}
+          {profile.following.following_requested.length > 0 && (
+            <>
+              <hr />
+              <h6 className="text-muted">Pending Requests</h6>
+              {profile.following.following_requested.map((user) => (
+                <ListGroup.Item key={user} className="d-flex justify-content-between align-items-center">
+                  <span>{user}</span>
+                  <Button size="sm" variant="outline-danger" onClick={() => handleCancel(user)}>
+                    Cancel Request
+                  </Button>
+                </ListGroup.Item>
+              ))}
+            </>
+          )}
+
+        </ListGroup>
+      </Tab>
+
+
+        <Tab eventKey="followers" title={`Followers [${profile.followers.followers.length}]`}>
         <ListGroup className="mt-3">
-        {profile.followers.length > 0 ? (
-          profile.followers.map((user) => (
-            <ListGroup.Item key={user}>
-              <Link to={`/get-profile?who=${user}`} className="text-decoration-none">
-                {user}
-              </Link>
-            </ListGroup.Item>
-          ))
-        ) : (
-          profile.followers.length == 0 && <p className="mt-3 text-muted">People following you will appear here.</p>
-        )}
-      </ListGroup>
-        </Tab>
+
+          {/* Approved Followers */}
+          {profile.followers.followers.length > 0 ? (
+            profile.followers.followers.map((user) => (
+              <ListGroup.Item key={user}>
+                <Link to={`/get-profile?who=${user}`} className="text-decoration-none">
+                  {user}
+                </Link>
+              </ListGroup.Item>
+            ))
+          ) : (
+            <p className="mt-3 text-muted">People following you will appear here.</p>
+          )}
+
+          {/* Pending Follower Requests */}
+          {profile.followers.followers_requested.length > 0 && (
+            <>
+              <hr />
+              <h6 className="text-muted">Follower Requests</h6>
+              {profile.followers.followers_requested.map((user) => (
+                <ListGroup.Item key={user} className="d-flex justify-content-between align-items-center">
+                  <span>{user}</span>
+                  <div>
+                    <Button size="sm" variant="success" className="me-2" onClick={() => handleAccept(user)}>
+                      Accept
+                    </Button>
+                    <Button size="sm" variant="outline-danger" onClick={() => handleReject(user)}>
+                      Reject
+                    </Button>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </>
+          )}
+
+        </ListGroup>
+      </Tab>
+
+      <Tab eventKey="bussiness_following" title={`Businesses Followed [${profile.businesses_followed.length}]`}>
+        <ListGroup className="mt-3">
+
+          {/* Approved Following */}
+          {profile.businesses_followed.length > 0 ? (
+            profile.businesses_followed.map((business) => (
+              <ListGroup.Item key={business}>
+                {business}
+              </ListGroup.Item>
+            ))
+          ) : (
+            <p className="mt-3 text-muted">People you follow will appear here.</p>
+          )}
+
+        </ListGroup>
+      </Tab>
       </Tabs>
     </Container>
   );

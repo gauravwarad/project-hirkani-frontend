@@ -20,6 +20,7 @@ function MyNavbar() {
             {/* Show Profile, Search, and Logout if the user is logged in */}
             {isLoggedIn && (
               <>
+                <Nav.Link href="/discover">Discover</Nav.Link>
                 <Nav.Link href="/profile">Profile</Nav.Link>
                 <Nav.Link href="/search">Search</Nav.Link>
                 <Nav.Link href='/addpost'>Add a Post</Nav.Link>

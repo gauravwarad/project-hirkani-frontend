@@ -6,6 +6,7 @@ const AddPost = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  // cosnt [selectedBusinessName, setSelectedBusinessName] = useState(null);
   const [title, setTitle] = useState("");
   const [rating, setRating] = useState("");
   const [text, setText] = useState("");
@@ -51,6 +52,8 @@ const AddPost = () => {
     }
     const postData = {
       business_id: selectedBusiness.id,
+      business_name: selectedBusiness.name,
+      business_address: selectedBusiness.address,
       title,
       rating,
       text,
