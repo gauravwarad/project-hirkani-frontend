@@ -8,7 +8,7 @@ const Footer = () => {
                 <Row className="justify-content-center">
                     <Col className="text-center">
                         <p className="mb-0">
-                            Made with 💙 and 😭 by <a href="https://www.gauravwa.com" target="_blank" rel="noopener noreferrer" className="text-info">Gaurav</a>
+                            Made with 💙 and 😭 by <a href="https://www.gaurawa.com" target="_blank" rel="noopener noreferrer" className="text-info">Gaurav</a>
                         </p>
                     </Col>
                 </Row>
